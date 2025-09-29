@@ -27,6 +27,8 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -34,32 +36,75 @@ api.interceptors.response.use(
 );
 
 export const authService = {
-  login: async (email: string, password: string) => {
-    const response = await api.post('/auth/login', { email, password });
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
+  login: async (usernameOrEmail: string, password: string) => {
+    const response = await api.post('/auth/login', { usernameOrEmail, password });
+    if (response.data.success && response.data.data.token) {
+      localStorage.setItem('token', response.data.data.token);
+      localStorage.setItem('refreshToken', response.data.data.refreshToken);
+      localStorage.setItem('user', JSON.stringify({
+        id: response.data.data.id,
+        username: response.data.data.username,
+        email: response.data.data.email,
+        role: response.data.data.role
+      }));
     }
     return response.data;
   },
 
-  register: async (userData: { name: string; email: string; password: string }) => {
+  register: async (userData: {
+    username: string;
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber?: string;
+    dateOfBirth?: string;
+    driverLicenseNumber?: string;
+    driverLicenseExpiry?: string;
+    address?: string;
+  }) => {
     const response = await api.post('/auth/register', userData);
     return response.data;
   },
 
   logout: () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
   },
 
-  getCurrentUser: async () => {
-    const response = await api.get('/auth/me');
+  getCurrentUser: () => {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  },
+
+  refreshToken: async () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) throw new Error('No refresh token available');
+    
+    const response = await api.post('/auth/refresh-token', null, {
+      params: { refreshToken }
+    });
+    
+    if (response.data.success && response.data.data.token) {
+      localStorage.setItem('token', response.data.data.token);
+      localStorage.setItem('refreshToken', response.data.data.refreshToken);
+    }
+    
     return response.data;
   },
 };
 
 export const vehicleService = {
-  getAll: async () => {
-    const response = await api.get('/vehicles');
+  getAll: async (filters?: {
+    vehicleType?: string;
+    location?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    page?: number;
+    size?: number;
+  }) => {
+    const response = await api.get('/vehicles', { params: filters });
     return response.data;
   },
 
@@ -68,40 +113,187 @@ export const vehicleService = {
     return response.data;
   },
 
+  search: async (searchParams: {
+    vehicleType?: string;
+    location?: string;
+    startDate?: string;
+    endDate?: string;
+    minPrice?: number;
+    maxPrice?: number;
+  }) => {
+    const response = await api.post('/vehicles/search', searchParams);
+    return response.data;
+  },
+
+  // Admin functions
   create: async (vehicleData: any) => {
-    const response = await api.post('/vehicles', vehicleData);
+    const response = await api.post('/vehicles/admin', vehicleData);
     return response.data;
   },
 
   update: async (id: string, vehicleData: any) => {
-    const response = await api.put(`/vehicles/${id}`, vehicleData);
+    const response = await api.put(`/vehicles/admin/${id}`, vehicleData);
     return response.data;
   },
 
   delete: async (id: string) => {
-    const response = await api.delete(`/vehicles/${id}`);
+    const response = await api.delete(`/vehicles/admin/${id}`);
+    return response.data;
+  },
+
+  updateStatus: async (id: string, status: string) => {
+    const response = await api.put(`/vehicles/admin/${id}/status`, null, {
+      params: { status }
+    });
     return response.data;
   },
 };
 
 export const bookingService = {
-  create: async (bookingData: any) => {
+  create: async (bookingData: {
+    vehicleId: number;
+    startDate: string;
+    endDate: string;
+    pickupLocation: string;
+    returnLocation: string;
+    securityDeposit?: number;
+    notes?: string;
+  }) => {
     const response = await api.post('/bookings', bookingData);
     return response.data;
   },
 
   getUserBookings: async () => {
-    const response = await api.get('/bookings/user');
+    const response = await api.get('/bookings/my-bookings');
     return response.data;
   },
 
-  getAllBookings: async () => {
-    const response = await api.get('/bookings');
+  getUserBookingsPaged: async (page: number = 0, size: number = 10) => {
+    const response = await api.get('/bookings/my-bookings/paged', {
+      params: { page, size }
+    });
     return response.data;
   },
 
-  updateStatus: async (id: string, status: string) => {
-    const response = await api.put(`/bookings/${id}/status`, { status });
+  getById: async (id: string) => {
+    const response = await api.get(`/bookings/${id}`);
+    return response.data;
+  },
+
+  getByReference: async (reference: string) => {
+    const response = await api.get(`/bookings/reference/${reference}`);
+    return response.data;
+  },
+
+  update: async (id: string, updateData: {
+    pickupLocation?: string;
+    returnLocation?: string;
+    notes?: string;
+  }) => {
+    const response = await api.put(`/bookings/${id}`, updateData);
+    return response.data;
+  },
+
+  cancel: async (id: string, reason?: string) => {
+    const response = await api.post(`/bookings/${id}/cancel`, null, {
+      params: { reason }
+    });
+    return response.data;
+  },
+
+  // Admin functions
+  getAllBookings: async (page: number = 0, size: number = 10) => {
+    const response = await api.get('/bookings/admin/all', {
+      params: { page, size }
+    });
+    return response.data;
+  },
+
+  confirm: async (id: string) => {
+    const response = await api.post(`/bookings/admin/${id}/confirm`);
+    return response.data;
+  },
+
+  activate: async (id: string) => {
+    const response = await api.post(`/bookings/admin/${id}/activate`);
+    return response.data;
+  },
+
+  complete: async (id: string, lateFee: number = 0, damageCharges: number = 0) => {
+    const response = await api.post(`/bookings/admin/${id}/complete`, null, {
+      params: { lateFee, damageCharges }
+    });
+    return response.data;
+  },
+};
+
+export const paymentService = {
+  processPayment: async (paymentData: {
+    bookingId: number;
+    amount: number;
+    paymentType: string;
+    paymentMethod: string;
+    notes?: string;
+    cardNumber?: string;
+    cardHolderName?: string;
+    expiryMonth?: string;
+    expiryYear?: string;
+    cvv?: string;
+  }) => {
+    const response = await api.post('/payments/process', paymentData);
+    return response.data;
+  },
+
+  getUserPayments: async () => {
+    const response = await api.get('/payments/my-payments');
+    return response.data;
+  },
+
+  getUserPaymentsPaged: async (page: number = 0, size: number = 10) => {
+    const response = await api.get('/payments/my-payments/paged', {
+      params: { page, size }
+    });
+    return response.data;
+  },
+
+  getById: async (id: string) => {
+    const response = await api.get(`/payments/${id}`);
+    return response.data;
+  },
+
+  getByTransactionId: async (transactionId: string) => {
+    const response = await api.get(`/payments/transaction/${transactionId}`);
+    return response.data;
+  },
+
+  getBookingPayments: async (bookingId: string) => {
+    const response = await api.get(`/payments/booking/${bookingId}`);
+    return response.data;
+  },
+};
+
+export const fileService = {
+  upload: async (file: File, subfolder: string = 'general') => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('subfolder', subfolder);
+    
+    const response = await api.post('/files/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  getDownloadUrl: (fileName: string) => {
+    return `${API_BASE_URL}/files/download/${fileName}`;
+  },
+
+  delete: async (fileName: string) => {
+    const [subfolder, ...fileNameParts] = fileName.split('/');
+    const actualFileName = fileNameParts.join('/');
+    const response = await api.delete(`/files/delete/${subfolder}/${actualFileName}`);
     return response.data;
   },
 };
