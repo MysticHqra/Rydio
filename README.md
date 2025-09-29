@@ -1,99 +1,70 @@
-# Rydio - Vehicle Rental Platform
+# 🚗 Rydio - Vehicle Rental Platform
 
-A comprehensive vehicle rental platform built with React frontend and Spring Boot backend, featuring JWT authentication, role-based access control, and complete booking management system.
+A modern, full-stack vehicle rental platform built with **Spring Boot** (backend) and **React** (frontend). Rydio provides a secure, user-friendly experience for vehicle rentals with production-ready JWT authentication, role-based access control, and comprehensive admin features.
 
-## 🚀 Features
+## ✨ Features
 
-### Frontend (React + TypeScript)
-- **Modern React 19** with TypeScript
-- **Tailwind CSS** for styling with Headless UI components
-- **React Router** for navigation
-- **Axios** for API communication
-- **Context API** for state management
-- **Responsive Design** for mobile and desktop
+### User Features
+- 🔐 **Secure JWT Authentication** - Production-ready authentication with encrypted passwords
+- 🚙 **Vehicle Browsing** - Browse available vehicles with guest access and login prompts
+- 📅 **Smart Booking System** - Intuitive booking process with user authentication
+- 👤 **Profile Management** - Secure user account management
+- 📱 **Responsive Design** - Mobile-first design with Tailwind CSS
+- 🔒 **Role-Based Access** - User and Admin role segregation
 
-### Backend (Spring Boot)
-- **Spring Boot 3.2** with Java 17
-- **Spring Security** with JWT authentication
-- **Spring Data JPA** with MySQL/H2 database
-- **Maven** build system
-- **Bean Validation** for input validation
-- **JUnit & Mockito** for testing
-- **File Upload/Download** functionality
-- **RESTful API** design
+### Admin Features
+- 🏢 **Protected Admin Dashboard** - Admin-only access to management features
+- 🚗 **Vehicle Management** - Complete CRUD operations for vehicle inventory
+- 👥 **User Administration** - User management with role controls
+- 📊 **API Testing Interface** - Admin-only API testing and monitoring
+- 🔐 **Enhanced Security** - JWT-based admin authentication
 
-### Key Modules
+### Security Features
+- 🛡️ **JWT Token Authentication** - Secure tokens with 24-hour expiration
+- 🔒 **BCrypt Password Encryption** - Industry-standard password hashing
+- 🚪 **Protected Routes** - Role-based component access control
+- 🔑 **Refresh Token Support** - Seamless token renewal
+- 👮 **Admin-Only Features** - Restricted access to sensitive operations
 
-#### 🔐 Authentication & Authorization
-- User registration and login
-- JWT token-based authentication
-- Role-based access control (Admin/User)
-- Password hashing with BCrypt
-- Token refresh mechanism
+## 🛠 Technology Stack
 
-#### 👤 User Management
-- User profile management
-- Driver license validation
-- Email verification
-- Profile updates
+### Backend
+- **Framework:** Spring Boot 3.2.0
+- **Security:** Spring Security 6+ with JWT
+- **Authentication:** JWT with BCrypt password encoding
+- **Database:** H2 (in-memory) with JPA/Hibernate
+- **Build Tool:** Maven
+- **Java Version:** 17+
 
-#### 🚗 Vehicle Management
-- Complete CRUD operations for vehicles
-- Vehicle search and filtering
-- Vehicle availability tracking
-- Support for cars, bikes, scooters, bicycles
-- Image upload for vehicles
-- Status management (Available, Rented, Maintenance, Inactive)
+### Frontend
+- **Framework:** React 18 with TypeScript
+- **Styling:** Tailwind CSS 3+
+- **State Management:** React Context API with Authentication Context
+- **Routing:** React Router with Protected Routes
+- **Build Tool:** Create React App
+- **HTTP Client:** Axios with error handling
 
-#### 📅 Booking Management
-- Create and manage bookings
-- Booking status tracking (Pending, Confirmed, Active, Completed, Cancelled)
-- Conflict detection for vehicle availability
-- Security deposit handling
-- Late fee and damage charge calculation
-- Booking history and reports
-
-#### 💳 Payment System (Stub)
-- Payment processing simulation
-- Multiple payment methods (Credit Card, UPI, Net Banking, etc.)
-- Transaction history
-- Refund processing
-- Payment status tracking
-
-#### 📁 File Management
-- Document upload (driver license, receipts, etc.)
-- Secure file storage in local directory
-- File download with proper authentication
-- Support for multiple file types
-
-## 🛠 Installation & Setup
+## 🚀 Quick Start
 
 ### Prerequisites
-- **Node.js** (v16 or higher)
-- **Java 17**
-- **Maven 3.6+**
-- **MySQL 8.0** (or use H2 for development)
+- Java 17 or higher
+- Node.js 16 or higher
+- Maven 3.6 or higher
 
 ### Backend Setup
 
-1. **Navigate to backend directory:**
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/MysticHqra/Rydio.git
+   cd rydio
+   ```
+
+2. **Navigate to backend directory:**
    ```bash
    cd backend
    ```
 
-2. **Configure database in `application.properties`:**
-   ```properties
-   # For MySQL
-   spring.datasource.url=jdbc:mysql://localhost:3306/rydio_db?createDatabaseIfNotExist=true
-   spring.datasource.username=root
-   spring.datasource.password=your_password
-   
-   # For H2 (development)
-   # spring.datasource.url=jdbc:h2:mem:testdb
-   # spring.h2.console.enabled=true
-   ```
-
-3. **Install dependencies and run:**
+3. **Install dependencies and start:**
    ```bash
    mvn clean install
    mvn spring-boot:run
@@ -120,88 +91,128 @@ A comprehensive vehicle rental platform built with React frontend and Spring Boo
 
 4. **Frontend will start on:** `http://localhost:3000`
 
+## 🔐 Authentication System
+
+### JWT Implementation
+- **Token Type:** Bearer tokens with HMAC-SHA256 signing
+- **Expiration:** 24 hours for access tokens
+- **Security:** BCrypt password hashing with configurable rounds
+- **Refresh:** Automatic token refresh mechanism
+
+### User Roles
+- **USER:** Standard user with basic access to vehicle browsing and booking
+- **ADMIN:** Full administrative access including user management and API testing
+
+### Test Accounts
+The application comes with pre-configured test accounts:
+
+```
+Admin Account:
+- Email: admin@rydio.com
+- Password: admin123
+- Role: ADMIN
+
+User Account:
+- Email: user@rydio.com
+- Password: user123
+- Role: USER
+```
+
 ## 📚 API Documentation
 
 ### Authentication Endpoints
 ```
-POST /api/auth/register          - User registration
-POST /api/auth/login             - User login
+POST /api/auth/register          - User registration with encrypted passwords
+POST /api/auth/login             - User login with JWT token generation
 POST /api/auth/refresh-token     - Refresh JWT token
 ```
 
 ### User Endpoints
 ```
-GET  /api/users/profile          - Get user profile
+GET  /api/users/profile          - Get authenticated user profile
 PUT  /api/users/profile          - Update user profile
-GET  /api/users/admin/all        - Get all users (Admin)
+GET  /api/users/admin/all        - Get all users (Admin only)
 ```
 
 ### Vehicle Endpoints
 ```
-GET  /api/vehicles               - Get all vehicles with filters
+GET  /api/vehicles               - Get all vehicles (public access)
 GET  /api/vehicles/{id}          - Get vehicle by ID
-POST /api/vehicles/search        - Search vehicles
-POST /api/vehicles/admin         - Create vehicle (Admin)
-PUT  /api/vehicles/admin/{id}    - Update vehicle (Admin)
-DELETE /api/vehicles/admin/{id}  - Delete vehicle (Admin)
+POST /api/vehicles/search        - Search vehicles with filters
+POST /api/vehicles/admin         - Create vehicle (Admin only)
+PUT  /api/vehicles/admin/{id}    - Update vehicle (Admin only)
+DELETE /api/vehicles/admin/{id}  - Delete vehicle (Admin only)
 ```
 
 ### Booking Endpoints
 ```
-POST /api/bookings               - Create booking
-GET  /api/bookings/my-bookings   - Get user bookings
+POST /api/bookings               - Create booking (authenticated users)
+GET  /api/bookings/my-bookings   - Get user's bookings
 GET  /api/bookings/{id}          - Get booking by ID
-PUT  /api/bookings/{id}          - Update booking
+PUT  /api/bookings/{id}          - Update booking status
 POST /api/bookings/{id}/cancel   - Cancel booking
-GET  /api/bookings/admin/all     - Get all bookings (Admin)
+GET  /api/bookings/admin/all     - Get all bookings (Admin only)
 ```
 
-### Payment Endpoints
+### Health Check
 ```
-POST /api/payments/process       - Process payment
-GET  /api/payments/my-payments   - Get user payments
-GET  /api/payments/{id}          - Get payment by ID
-GET  /api/payments/booking/{id}  - Get booking payments
-```
-
-### File Endpoints
-```
-POST /api/files/upload           - Upload file
-GET  /api/files/download/{path}  - Download file
-DELETE /api/files/delete/{path}  - Delete file (Admin)
+GET  /api/health                 - Application health status
 ```
 
 ## 🏗 Project Structure
 
 ```
 Rydio/
-├── frontend/                    # React frontend
+├── frontend/                    # React TypeScript frontend
 │   ├── public/                  # Static assets
 │   ├── src/
-│   │   ├── components/          # Reusable components
-│   │   ├── pages/              # Page components
+│   │   ├── components/          # Reusable UI components
+│   │   │   ├── Header.tsx       # Navigation with role-based visibility
+│   │   │   ├── VehicleCard.tsx  # Vehicle display component
+│   │   │   └── ProtectedRoute.tsx # Role-based route protection
+│   │   ├── pages/              # Application pages
+│   │   │   ├── Home.tsx        # Landing page
+│   │   │   ├── Login.tsx       # Authentication page
+│   │   │   ├── Register.tsx    # User registration
+│   │   │   ├── VehicleList.tsx # Vehicle browsing with guest prompts
+│   │   │   ├── Booking.tsx     # Booking management
+│   │   │   └── IntegrationTest.tsx # Admin-only API testing
 │   │   ├── context/            # React context providers
+│   │   │   ├── AuthContext.tsx # Authentication state management
+│   │   │   └── AppContext.tsx  # Global application state
 │   │   ├── services/           # API service functions
+│   │   │   └── api.ts          # HTTP client with error handling
 │   │   ├── types/              # TypeScript type definitions
-│   │   └── App.tsx             # Main app component
+│   │   └── App.tsx             # Main application component
 │   ├── package.json
 │   └── tailwind.config.js
 │
 └── backend/                     # Spring Boot backend
     ├── src/
     │   ├── main/java/com/rydio/
-    │   │   ├── booking/         # Booking module
-    │   │   ├── common/          # Common utilities
-    │   │   ├── file/            # File management
-    │   │   ├── payment/         # Payment processing
-    │   │   ├── security/        # Security configuration
-    │   │   ├── user/            # User management
-    │   │   ├── vehicle/         # Vehicle management
-    │   │   └── RydioBackendApplication.java
+    │   │   ├── common/          # Shared utilities and DTOs
+    │   │   │   ├── dto/         # Data transfer objects
+    │   │   │   ├── entity/      # Base entity classes
+    │   │   │   └── exception/   # Custom exception handling
+    │   │   ├── config/          # Spring configuration
+    │   │   │   ├── SecurityConfig.java      # Security configuration
+    │   │   │   ├── JwtAuthenticationFilter.java # JWT filter
+    │   │   │   ├── JwtUtil.java             # JWT utilities
+    │   │   │   └── DataInitializer.java     # Test data initialization
+    │   │   ├── controller/      # REST API controllers
+    │   │   │   ├── AuthController.java      # Authentication endpoints
+    │   │   │   ├── UserController.java      # User management
+    │   │   │   ├── BookingController.java   # Booking operations
+    │   │   │   └── HealthController.java    # Health check
+    │   │   ├── user/            # User domain
+    │   │   │   ├── entity/      # User entity
+    │   │   │   ├── repository/  # Data access layer
+    │   │   │   ├── service/     # Business logic
+    │   │   │   └── dto/         # User DTOs
+    │   │   └── RydioBackendApplication.java # Main application class
     │   ├── main/resources/
-    │   │   └── application.properties
-    │   └── test/                # Unit tests
-    ├── uploads/                 # File upload directory
+    │   │   └── application.properties       # Application configuration
+    │   └── test/                # Unit and integration tests
     └── pom.xml                 # Maven configuration
 ```
 
@@ -219,80 +230,189 @@ cd frontend
 npm test
 ```
 
+### Manual Testing
+1. **Start both backend and frontend**
+2. **Test authentication flow:**
+   - Register new user
+   - Login with test accounts
+   - Verify JWT tokens in browser dev tools
+3. **Test role-based access:**
+   - Login as admin to access API Test page
+   - Login as user to verify restricted access
+4. **Test guest experience:**
+   - Browse vehicles without authentication
+   - Verify login prompts for booking actions
+
 ## 🔧 Configuration
 
-### Environment Variables
-
-#### Backend (`application.properties`)
+### Backend Configuration (`application.properties`)
 ```properties
-# Database
-spring.datasource.url=jdbc:mysql://localhost:3306/rydio_db
-spring.datasource.username=root
-spring.datasource.password=password
+# Server Configuration
+server.port=8080
 
-# JWT
-jwt.secret=your-secret-key-here
+# Database Configuration (H2 In-Memory)
+spring.datasource.url=jdbc:h2:mem:rydio_db
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+# JPA Configuration
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+# JWT Configuration
+jwt.secret=mySecretKey
 jwt.expiration=86400000
 
-# File Upload
-app.upload.dir=uploads/
-spring.servlet.multipart.max-file-size=10MB
+# CORS Configuration
+cors.allowed-origins=http://localhost:3000
 ```
 
-#### Frontend (`.env`)
+### Frontend Configuration
+The frontend uses environment variables for configuration. Create a `.env` file:
 ```env
 REACT_APP_API_BASE_URL=http://localhost:8080/api
 ```
 
 ## 🚀 Deployment
 
-### Backend Deployment
-1. Build JAR file: `mvn clean package`
-2. Run JAR: `java -jar target/rydio-backend-1.0.0.jar`
-3. Configure production database and environment variables
+### Production Considerations
 
-### Frontend Deployment
-1. Build production bundle: `npm run build`
-2. Serve static files using nginx, Apache, or CDN
-3. Update API base URL for production
+#### Backend Deployment
+1. **Build JAR file:**
+   ```bash
+   mvn clean package -DskipTests
+   ```
+
+2. **Configure production database:**
+   ```properties
+   # Replace H2 with production database
+   spring.datasource.url=jdbc:mysql://localhost:3306/rydio_production
+   spring.datasource.username=${DB_USERNAME}
+   spring.datasource.password=${DB_PASSWORD}
+   spring.jpa.hibernate.ddl-auto=validate
+   ```
+
+3. **Set production JWT secret:**
+   ```properties
+   jwt.secret=${JWT_SECRET}
+   ```
+
+4. **Run application:**
+   ```bash
+   java -jar target/rydio-backend-1.0.0.jar
+   ```
+
+#### Frontend Deployment
+1. **Build production bundle:**
+   ```bash
+   npm run build
+   ```
+
+2. **Configure production API URL:**
+   ```env
+   REACT_APP_API_BASE_URL=https://your-api-domain.com/api
+   ```
+
+3. **Deploy static files** to CDN, nginx, or hosting service
+
+## 🔒 Security Features
+
+### Authentication Security
+- **Password Encryption:** BCrypt with configurable salt rounds
+- **JWT Security:** HMAC-SHA256 signing with secret key
+- **Token Expiration:** 24-hour access tokens with refresh capability
+- **CORS Protection:** Configured for frontend domain only
+
+### Access Control
+- **Protected Routes:** Frontend route protection based on user roles
+- **API Security:** Backend endpoint protection with JWT validation
+- **Admin Features:** Role-based access to sensitive operations
+- **Guest Experience:** Graceful handling of unauthenticated users
+
+### Security Best Practices
+- **No sensitive data in JWT payload**
+- **Secure password requirements** (configurable)
+- **Input validation** on all endpoints
+- **Error handling** without information disclosure
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+1. **Fork the repository**
+2. **Create a feature branch:** `git checkout -b feature/your-feature-name`
+3. **Commit your changes:** `git commit -m 'Add some feature'`
+4. **Push to the branch:** `git push origin feature/your-feature-name`
+5. **Create a Pull Request**
+
+### Development Guidelines
+- Follow existing code style and patterns
+- Add tests for new features
+- Update documentation for API changes
+- Use TypeScript strict mode for frontend
+- Follow Spring Boot best practices for backend
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👥 Team
+## 👥 Development Team
 
-### Frontend Team
-- React TypeScript development
-- Tailwind CSS styling
-- Component architecture
-- State management
+### Backend Development
+- **Spring Boot** REST API development
+- **JWT Authentication** implementation with Spring Security
+- **Database Design** with JPA/Hibernate
+- **Security Configuration** and access control
+- **Unit Testing** with JUnit and Mockito
 
-### Backend Team  
-- Spring Boot REST API development
-- JWT authentication implementation
-- Database design and optimization
-- Unit testing with JUnit
+### Frontend Development
+- **React TypeScript** application development
+- **Tailwind CSS** responsive design implementation
+- **Context API** state management
+- **Protected Routes** and role-based access
+- **User Experience** optimization
 
 ## 🔗 Quick Links
 
-- **Frontend:** http://localhost:3000
+- **Frontend Application:** http://localhost:3000
 - **Backend API:** http://localhost:8080/api
-- **API Documentation:** http://localhost:8080/swagger-ui.html (if Swagger is configured)
-- **H2 Console:** http://localhost:8080/h2-console (if H2 is enabled)
+- **H2 Database Console:** http://localhost:8080/h2-console
+- **API Health Check:** http://localhost:8080/api/health
 
 ## 📞 Support
 
-For support and questions, please create an issue in the repository or contact the development team.
+For support, questions, or feature requests:
+1. **Create an issue** in the GitHub repository
+2. **Check existing documentation** in this README
+3. **Review the codebase** for implementation examples
+4. **Contact the development team** for urgent matters
 
 ---
 
-**Built with ❤️ by the Rydio Team**
+## 🎯 Current Status
+
+✅ **Production Ready Features:**
+- Complete JWT authentication system
+- Role-based access control
+- Encrypted password storage
+- Protected routes and components
+- Admin-only features
+- Guest user experience
+- Responsive design
+- Error handling and user feedback
+
+🔄 **Future Enhancements:**
+- Payment gateway integration
+- Real-time booking notifications
+- Advanced vehicle search filters
+- Mobile application
+- Email verification system
+- Booking conflict resolution
+- Analytics dashboard
+
+---
+
+**Built with ❤️ by the Rydio Development Team**
