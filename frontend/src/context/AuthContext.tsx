@@ -77,26 +77,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await authService.login(credentials.usernameOrEmail, credentials.password);
       
       if (response.success) {
-        // Get the basic user info from localStorage (from JWT response)
-        let user = authService.getCurrentUser();
-        
-        // Try to fetch the full user profile to get firstName/lastName
-        try {
-          const { userService } = await import('../services/api');
-          const profileResponse = await userService.getProfile();
-          if (profileResponse.success) {
-            user = {
-              ...user,
-              firstName: profileResponse.data.firstName,
-              lastName: profileResponse.data.lastName,
-            };
-            // Update localStorage with complete user info
-            localStorage.setItem('user', JSON.stringify(user));
-          }
-        } catch (profileError) {
-          console.warn('Could not fetch user profile:', profileError);
-          // Continue with basic user info from JWT
-        }
+        // Get the complete user info from localStorage (already includes firstName/lastName)
+        const user = authService.getCurrentUser();
         
         setState(prev => ({
           ...prev,

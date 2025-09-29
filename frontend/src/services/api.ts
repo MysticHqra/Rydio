@@ -25,11 +25,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Only redirect on 401 if it's not a login or register request
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      const isAuthRequest = error.config?.url?.includes('/auth/login') || 
+                           error.config?.url?.includes('/auth/register');
+      
+      if (!isAuthRequest) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
@@ -37,20 +43,34 @@ api.interceptors.response.use(
 
 export const authService = {
   login: async (usernameOrEmail: string, password: string) => {
-    const response = await api.post('/auth/login', { usernameOrEmail, password });
-    if (response.data.success && response.data.data.token) {
-      localStorage.setItem('token', response.data.data.token);
-      localStorage.setItem('refreshToken', response.data.data.refreshToken);
-      localStorage.setItem('user', JSON.stringify({
-        id: response.data.data.userId,
-        username: response.data.data.username,
-        email: response.data.data.email,
-        firstName: '', // Not provided in JWT response, will fetch separately if needed
-        lastName: '', // Not provided in JWT response, will fetch separately if needed
-        role: response.data.data.role
-      }));
+    try {
+      const response = await api.post('/auth/login', { usernameOrEmail, password });
+      if (response.data.success && response.data.data.token) {
+        localStorage.setItem('token', response.data.data.token);
+        localStorage.setItem('refreshToken', response.data.data.refreshToken);
+        localStorage.setItem('user', JSON.stringify({
+          id: response.data.data.userId,
+          username: response.data.data.username,
+          email: response.data.data.email,
+          firstName: response.data.data.firstName || '',
+          lastName: response.data.data.lastName || '',
+          role: response.data.data.role
+        }));
+      }
+      return response.data;
+    } catch (error: any) {
+      // Handle authentication errors with user-friendly messages
+      if (error.response?.status === 401) {
+        const errorMessage = error.response.data?.message || 'Invalid username or password';
+        return {
+          success: false,
+          message: errorMessage,
+          data: null
+        };
+      }
+      // Re-throw other errors
+      throw error;
     }
-    return response.data;
   },
 
   register: async (userData: {
@@ -65,8 +85,22 @@ export const authService = {
     driverLicenseExpiry?: string;
     address?: string;
   }) => {
-    const response = await api.post('/auth/register', userData);
-    return response.data;
+    try {
+      const response = await api.post('/auth/register', userData);
+      return response.data;
+    } catch (error: any) {
+      // Handle registration errors with user-friendly messages
+      if (error.response?.status === 400) {
+        const errorMessage = error.response.data?.message || 'Registration failed. Please check your details.';
+        return {
+          success: false,
+          message: errorMessage,
+          data: null
+        };
+      }
+      // Re-throw other errors
+      throw error;
+    }
   },
 
   logout: () => {
@@ -95,8 +129,8 @@ export const authService = {
         id: response.data.data.userId,
         username: response.data.data.username,
         email: response.data.data.email,
-        firstName: '',
-        lastName: '',
+        firstName: response.data.data.firstName || '',
+        lastName: response.data.data.lastName || '',
         role: response.data.data.role
       }));
     }
@@ -114,13 +148,13 @@ export const vehicleService = {
     page?: number;
     size?: number;
   }) => {
-    const response = await api.get('/vehicles', { params: filters });
-    return response.data;
+    const response = await api.get('/vehicles');
+    return response.data; // Backend now returns proper JSON object
   },
 
   getById: async (id: string) => {
     const response = await api.get(`/vehicles/${id}`);
-    return response.data;
+    return response.data; // Backend now returns proper JSON object
   },
 
   search: async (searchParams: {
@@ -131,58 +165,60 @@ export const vehicleService = {
     minPrice?: number;
     maxPrice?: number;
   }) => {
-    const response = await api.post('/vehicles/search', searchParams);
-    return response.data;
+    const params = new URLSearchParams();
+    if (searchParams.vehicleType) params.append('type', searchParams.vehicleType);
+    if (searchParams.location) params.append('location', searchParams.location);
+    
+    const response = await api.get(`/vehicles/search?${params.toString()}`);
+    return response.data; // Backend now returns proper JSON object
   },
 
-  // Admin functions
+  // Admin functions - these will need to be implemented in backend later
   create: async (vehicleData: any) => {
-    const response = await api.post('/vehicles', vehicleData);
-    return response.data;
+    throw new Error('Vehicle creation not implemented yet');
   },
 
   update: async (id: string, vehicleData: any) => {
-    const response = await api.put(`/vehicles/${id}`, vehicleData);
-    return response.data;
+    throw new Error('Vehicle update not implemented yet');
   },
 
   delete: async (id: string) => {
-    const response = await api.delete(`/vehicles/${id}`);
-    return response.data;
+    throw new Error('Vehicle deletion not implemented yet');
   },
 
   updateStatus: async (id: string, status: string) => {
-    const response = await api.put(`/vehicles/${id}/status`, null, {
-      params: { status }
-    });
-    return response.data;
+    throw new Error('Vehicle status update not implemented yet');
   },
 };
 
 export const bookingService = {
   create: async (bookingData: {
-    vehicleId: number;
+    vehicleId: string;  // Changed from number to string to match backend
     startDate: string;
     endDate: string;
     pickupLocation: string;
-    returnLocation: string;
+    dropLocation: string;  // Changed from returnLocation to dropLocation to match backend
     securityDeposit?: number;
     notes?: string;
   }) => {
-    const response = await api.post('/bookings', bookingData);
+    const response = await api.post('/bookings', {
+      vehicleId: bookingData.vehicleId,
+      startDate: bookingData.startDate,
+      endDate: bookingData.endDate,
+      pickupLocation: bookingData.pickupLocation,
+      dropLocation: bookingData.dropLocation || bookingData.pickupLocation // Use pickupLocation as fallback
+    });
     return response.data;
   },
 
   getUserBookings: async () => {
     const response = await api.get('/bookings');
-    return response.data;
+    return response.data; // Backend now returns proper JSON object
   },
 
   getUserBookingsPaged: async (page: number = 0, size: number = 10) => {
-    const response = await api.get('/bookings', {
-      params: { page, size }
-    });
-    return response.data;
+    // For now, just return all bookings - pagination can be added later
+    return await bookingService.getUserBookings();
   },
 
   getById: async (id: string) => {
@@ -191,49 +227,39 @@ export const bookingService = {
   },
 
   getByReference: async (reference: string) => {
-    const response = await api.get(`/bookings/reference/${reference}`);
-    return response.data;
+    // This endpoint doesn't exist yet, so throw an error for now
+    throw new Error('Get booking by reference not implemented yet');
   },
 
   update: async (id: string, updateData: {
     pickupLocation?: string;
-    returnLocation?: string;
+    dropLocation?: string; // Changed from returnLocation
     notes?: string;
   }) => {
-    const response = await api.put(`/bookings/${id}`, updateData);
-    return response.data;
+    // This endpoint doesn't exist yet, so throw an error for now
+    throw new Error('Booking update not implemented yet');
   },
 
   cancel: async (id: string, reason?: string) => {
-    const response = await api.post(`/bookings/${id}/cancel`, null, {
-      params: { reason }
-    });
-    return response.data;
+    // This endpoint doesn't exist yet, so throw an error for now
+    throw new Error('Booking cancellation not implemented yet');
   },
 
-  // Admin functions
+  // Admin functions - these don't exist in backend yet
   getAllBookings: async (page: number = 0, size: number = 10) => {
-    const response = await api.get('/bookings/admin/all', {
-      params: { page, size }
-    });
-    return response.data;
+    throw new Error('Admin booking management not implemented yet');
   },
 
   confirm: async (id: string) => {
-    const response = await api.post(`/bookings/admin/${id}/confirm`);
-    return response.data;
+    throw new Error('Booking confirmation not implemented yet');
   },
 
   activate: async (id: string) => {
-    const response = await api.post(`/bookings/admin/${id}/activate`);
-    return response.data;
+    throw new Error('Booking activation not implemented yet');
   },
 
   complete: async (id: string, lateFee: number = 0, damageCharges: number = 0) => {
-    const response = await api.post(`/bookings/admin/${id}/complete`, null, {
-      params: { lateFee, damageCharges }
-    });
-    return response.data;
+    throw new Error('Booking completion not implemented yet');
   },
 };
 

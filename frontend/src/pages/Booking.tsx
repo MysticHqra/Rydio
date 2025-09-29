@@ -40,8 +40,8 @@ const Booking: React.FC = () => {
 
   const fetchVehicle = async () => {
     try {
-      const data = await vehicleService.getById(vehicleId!);
-      setVehicle(data);
+      const response = await vehicleService.getById(vehicleId!);
+      setVehicle(response.data);
     } catch (error) {
       setError('Failed to fetch vehicle details');
     } finally {
@@ -92,11 +92,11 @@ const Booking: React.FC = () => {
       const endDateTime = new Date(`${bookingData.endDate}T${bookingData.endTime}`);
 
       await bookingService.create({
-        vehicleId: typeof vehicle!.id === 'string' ? parseInt(vehicle!.id) : vehicle!.id,
+        vehicleId: vehicle!.id.toString(),
         startDate: startDateTime.toISOString(),
         endDate: endDateTime.toISOString(),
         pickupLocation: bookingData.pickupLocation || vehicle!.location || 'Default Location',
-        returnLocation: bookingData.returnLocation || vehicle!.location || 'Default Location',
+        dropLocation: bookingData.returnLocation || vehicle!.location || 'Default Location',
         notes: bookingData.notes || '',
       });
 

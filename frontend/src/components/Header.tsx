@@ -38,6 +38,14 @@ const Header: React.FC = () => {
             )}
             {user?.role === 'ADMIN' && (
               <Link
+                to="/test"
+                className="text-blue-500 hover:text-blue-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                API Test
+              </Link>
+            )}
+            {user?.role === 'ADMIN' && (
+              <Link
                 to="/admin"
                 className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
