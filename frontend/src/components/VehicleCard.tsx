@@ -1,11 +1,11 @@
 import React from 'react';
-import { Vehicle } from '../types';
+import { Vehicle } from '../types/api';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
-  onBook?: (vehicleId: string) => void;
+  onBook?: (vehicleId: string | number) => void;
   onEdit?: (vehicle: Vehicle) => void;
-  onDelete?: (vehicleId: string) => void;
+  onDelete?: (vehicleId: string | number) => void;
   isAdmin?: boolean;
 }
 
@@ -20,24 +20,24 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="relative">
         <img
-          src={vehicle.image || '/placeholder-vehicle.jpg'}
+          src={vehicle.imageUrl || '/placeholder-vehicle.jpg'}
           alt={`${vehicle.brand} ${vehicle.model}`}
           className="w-full h-48 object-cover"
         />
         <div className="absolute top-2 right-2">
           <span
             className={`px-2 py-1 rounded-full text-xs font-medium ${
-              vehicle.availability
+              vehicle.status === 'AVAILABLE'
                 ? 'bg-green-100 text-green-800'
                 : 'bg-red-100 text-red-800'
             }`}
           >
-            {vehicle.availability ? 'Available' : 'Unavailable'}
+            {vehicle.status === 'AVAILABLE' ? 'Available' : 'Unavailable'}
           </span>
         </div>
         <div className="absolute top-2 left-2">
           <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
-            {vehicle.type === '2W' ? 'Two Wheeler' : 'Four Wheeler'}
+            {['BIKE', 'SCOOTER', 'BICYCLE'].includes(vehicle.vehicleType) ? 'Two Wheeler' : 'Four Wheeler'}
           </span>
         </div>
       </div>
@@ -49,8 +49,8 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
         <p className="text-gray-600 text-sm mb-2">{vehicle.location}</p>
         
         <div className="flex justify-between items-center mb-4">
-          <span className="text-2xl font-bold text-primary-600">
-            ₹{vehicle.pricePerHour}/hr
+          <span className="text-2xl font-bold text-indigo-600">
+            ₹{vehicle.hourlyRate || Math.round(vehicle.dailyRate / 24)}/hr
           </span>
         </div>
         
@@ -72,14 +72,14 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
         ) : (
           <button
             onClick={() => onBook && onBook(vehicle.id)}
-            disabled={!vehicle.availability}
+            disabled={vehicle.status !== 'AVAILABLE'}
             className={`w-full py-2 px-4 rounded-md text-sm font-medium ${
-              vehicle.availability
-                ? 'bg-primary-600 hover:bg-primary-700 text-white'
+              vehicle.status === 'AVAILABLE'
+                ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
-            {vehicle.availability ? 'Book Now' : 'Unavailable'}
+            {vehicle.status === 'AVAILABLE' ? 'Book Now' : 'Unavailable'}
           </button>
         )}
       </div>

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 
 const Home: React.FC = () => {
-  const { state } = useAppContext();
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -30,7 +30,7 @@ const Home: React.FC = () => {
                       Browse Vehicles
                     </Link>
                   </div>
-                  {!state.isAuthenticated && (
+                  {!isAuthenticated && (
                     <div className="mt-3 sm:mt-0 sm:ml-3">
                       <Link
                         to="/register"

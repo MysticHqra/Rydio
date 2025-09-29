@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { vehicleService, bookingService } from '../services/api';
-import { Vehicle } from '../types';
+import { Vehicle } from '../types/api';
 
 const Booking: React.FC = () => {
   const { vehicleId } = useParams<{ vehicleId: string }>();
@@ -14,22 +14,25 @@ const Booking: React.FC = () => {
     startTime: '',
     endDate: '',
     endTime: '',
+    pickupLocation: '',
+    returnLocation: '',
+    notes: '',
   });
   const [totalPrice, setTotalPrice] = useState(0);
   const [error, setError] = useState('');
 
-  const { state } = useAppContext();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!state.isAuthenticated) {
+    if (!isAuthenticated) {
       navigate('/login');
       return;
     }
     if (vehicleId) {
       fetchVehicle();
     }
-  }, [vehicleId, state.isAuthenticated]);
+  }, [vehicleId, isAuthenticated]);
 
   useEffect(() => {
     calculateTotalPrice();
@@ -62,10 +65,11 @@ const Booking: React.FC = () => {
     }
 
     const hours = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60 * 60);
-    setTotalPrice(Math.round(hours * vehicle.pricePerHour * 100) / 100);
+    const rate = vehicle.hourlyRate || vehicle.dailyRate / 24;
+    setTotalPrice(Math.round(hours * rate * 100) / 100);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setBookingData({
       ...bookingData,
       [e.target.name]: e.target.value,
@@ -88,10 +92,12 @@ const Booking: React.FC = () => {
       const endDateTime = new Date(`${bookingData.endDate}T${bookingData.endTime}`);
 
       await bookingService.create({
-        vehicleId: vehicle!.id,
-        startTime: startDateTime.toISOString(),
-        endTime: endDateTime.toISOString(),
-        totalPrice,
+        vehicleId: typeof vehicle!.id === 'string' ? parseInt(vehicle!.id) : vehicle!.id,
+        startDate: startDateTime.toISOString(),
+        endDate: endDateTime.toISOString(),
+        pickupLocation: bookingData.pickupLocation || vehicle!.location || 'Default Location',
+        returnLocation: bookingData.returnLocation || vehicle!.location || 'Default Location',
+        notes: bookingData.notes || '',
       });
 
       navigate('/profile', { 
@@ -136,7 +142,7 @@ const Booking: React.FC = () => {
             {/* Vehicle Details */}
             <div className="md:w-1/2 p-6">
               <img
-                src={vehicle.image || '/placeholder-vehicle.jpg'}
+                src={vehicle.imageUrl || '/placeholder-vehicle.jpg'}
                 alt={`${vehicle.brand} ${vehicle.model}`}
                 className="w-full h-64 object-cover rounded-lg mb-4"
               />
@@ -146,14 +152,14 @@ const Booking: React.FC = () => {
               <p className="text-gray-600 mb-2">{vehicle.location}</p>
               <div className="flex items-center mb-4">
                 <span className="text-3xl font-bold text-primary-600">
-                  ₹{vehicle.pricePerHour}/hr
+                  ₹{vehicle.hourlyRate || Math.round(vehicle.dailyRate / 24)}/hr
                 </span>
                 <span className={`ml-4 px-2 py-1 rounded-full text-xs font-medium ${
-                  vehicle.availability
+                  vehicle.status === 'AVAILABLE'
                     ? 'bg-green-100 text-green-800'
                     : 'bg-red-100 text-red-800'
                 }`}>
-                  {vehicle.availability ? 'Available' : 'Unavailable'}
+                  {vehicle.status === 'AVAILABLE' ? 'Available' : 'Unavailable'}
                 </span>
               </div>
               <div className="bg-blue-50 p-4 rounded-lg">
@@ -232,6 +238,49 @@ const Booking: React.FC = () => {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Pickup Location
+                    </label>
+                    <input
+                      type="text"
+                      name="pickupLocation"
+                      value={bookingData.pickupLocation}
+                      onChange={handleInputChange}
+                      placeholder={vehicle?.location || 'Enter pickup location'}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Return Location
+                    </label>
+                    <input
+                      type="text"
+                      name="returnLocation"
+                      value={bookingData.returnLocation}
+                      onChange={handleInputChange}
+                      placeholder={vehicle?.location || 'Enter return location'}
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Additional Notes (Optional)
+                  </label>
+                  <textarea
+                    name="notes"
+                    rows={3}
+                    value={bookingData.notes}
+                    onChange={handleInputChange}
+                    placeholder="Any special requirements or notes..."
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+
                 {/* Price Summary */}
                 <div className="bg-white p-4 rounded-lg border">
                   <h3 className="font-semibold text-gray-900 mb-2">Price Summary</h3>
@@ -243,7 +292,7 @@ const Booking: React.FC = () => {
                   </div>
                   {totalPrice > 0 && (
                     <p className="text-sm text-gray-500 mt-1">
-                      Rate: ₹{vehicle.pricePerHour}/hr
+                      Rate: ₹{vehicle.hourlyRate || Math.round(vehicle.dailyRate / 24)}/hr
                     </p>
                   )}
                 </div>
@@ -262,7 +311,7 @@ const Booking: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    disabled={bookingLoading || totalPrice <= 0 || !vehicle.availability}
+                    disabled={bookingLoading || totalPrice <= 0 || vehicle.status !== 'AVAILABLE'}
                     className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {bookingLoading ? 'Booking...' : `Book Now - ₹${totalPrice.toFixed(2)}`}

@@ -1,3 +1,7 @@
+// Re-export API types for convenience
+export * from './api';
+
+// Legacy types (kept for backward compatibility)
 export interface User {
   id: string;
   name: string;

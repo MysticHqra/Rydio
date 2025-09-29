@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { vehicleService } from '../services/api';
 import VehicleCard from '../components/VehicleCard';
-import { Vehicle } from '../types';
+import { Vehicle } from '../types/api';
 
 const VehicleList: React.FC = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -16,7 +16,7 @@ const VehicleList: React.FC = () => {
     location: '',
   });
 
-  const { state } = useAppContext();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,10 +29,13 @@ const VehicleList: React.FC = () => {
 
   const fetchVehicles = async () => {
     try {
-      const data = await vehicleService.getAll();
-      setVehicles(data);
+      const response = await vehicleService.getAll();
+      // Handle API response structure - data might be in response.data
+      const data = response.data || response;
+      setVehicles(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch vehicles:', error);
+      setVehicles([]);
     } finally {
       setLoading(false);
     }
@@ -42,28 +45,40 @@ const VehicleList: React.FC = () => {
     let filtered = vehicles;
 
     if (filters.type !== 'all') {
-      filtered = filtered.filter(vehicle => vehicle.type === filters.type);
+      // Map filter values to backend vehicleType values
+      const typeMapping = {
+        '2W': ['BIKE', 'SCOOTER', 'BICYCLE'],
+        '4W': ['CAR']
+      };
+      const allowedTypes = typeMapping[filters.type as keyof typeof typeMapping] || [];
+      filtered = filtered.filter(vehicle => allowedTypes.includes(vehicle.vehicleType));
     }
 
     if (filters.availability !== 'all') {
       const isAvailable = filters.availability === 'available';
-      filtered = filtered.filter(vehicle => vehicle.availability === isAvailable);
+      filtered = filtered.filter(vehicle => 
+        isAvailable ? vehicle.status === 'AVAILABLE' : vehicle.status !== 'AVAILABLE'
+      );
     }
 
     if (filters.priceRange !== 'all') {
       const [min, max] = filters.priceRange.split('-').map(Number);
       if (max) {
-        filtered = filtered.filter(vehicle => 
-          vehicle.pricePerHour >= min && vehicle.pricePerHour <= max
-        );
+        filtered = filtered.filter(vehicle => {
+          const rate = vehicle.hourlyRate || vehicle.dailyRate / 24;
+          return rate >= min && rate <= max;
+        });
       } else {
-        filtered = filtered.filter(vehicle => vehicle.pricePerHour >= min);
+        filtered = filtered.filter(vehicle => {
+          const rate = vehicle.hourlyRate || vehicle.dailyRate / 24;
+          return rate >= min;
+        });
       }
     }
 
     if (filters.location) {
       filtered = filtered.filter(vehicle => 
-        vehicle.location.toLowerCase().includes(filters.location.toLowerCase())
+        vehicle.location?.toLowerCase().includes(filters.location.toLowerCase())
       );
     }
 
@@ -74,8 +89,8 @@ const VehicleList: React.FC = () => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleBookVehicle = (vehicleId: string) => {
-    if (!state.isAuthenticated) {
+  const handleBookVehicle = (vehicleId: string | number) => {
+    if (!isAuthenticated) {
       navigate('/login');
       return;
     }

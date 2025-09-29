@@ -1,22 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
-import { authService } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const Header: React.FC = () => {
-  const { state, dispatch } = useAppContext();
-
-  const handleLogout = () => {
-    authService.logout();
-    dispatch({ type: 'LOGOUT' });
-  };
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <header className="bg-white shadow-lg border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold text-primary-600">
+            <Link to="/" className="text-2xl font-bold text-indigo-600">
               Rydio
             </Link>
           </div>
@@ -34,7 +28,7 @@ const Header: React.FC = () => {
             >
               Vehicles
             </Link>
-            {state.isAuthenticated && (
+            {isAuthenticated && (
               <Link
                 to="/profile"
                 className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
@@ -42,7 +36,7 @@ const Header: React.FC = () => {
                 Profile
               </Link>
             )}
-            {state.user?.role === 'admin' && (
+            {user?.role === 'ADMIN' && (
               <Link
                 to="/admin"
                 className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
@@ -53,11 +47,11 @@ const Header: React.FC = () => {
           </nav>
 
           <div className="flex items-center space-x-4">
-            {state.isAuthenticated ? (
+            {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <span className="text-gray-700">Hello, {state.user?.name}</span>
+                <span className="text-gray-700">Hello, {user?.firstName} {user?.lastName}</span>
                 <button
-                  onClick={handleLogout}
+                  onClick={logout}
                   className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
                 >
                   Logout
@@ -67,13 +61,13 @@ const Header: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <Link
                   to="/login"
-                  className="text-primary-600 hover:text-primary-500 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-indigo-600 hover:text-indigo-500 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
                 >
                   Register
                 </Link>

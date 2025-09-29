@@ -42,9 +42,11 @@ export const authService = {
       localStorage.setItem('token', response.data.data.token);
       localStorage.setItem('refreshToken', response.data.data.refreshToken);
       localStorage.setItem('user', JSON.stringify({
-        id: response.data.data.id,
+        id: response.data.data.userId,
         username: response.data.data.username,
         email: response.data.data.email,
+        firstName: '', // Not provided in JWT response, will fetch separately if needed
+        lastName: '', // Not provided in JWT response, will fetch separately if needed
         role: response.data.data.role
       }));
     }
@@ -89,6 +91,14 @@ export const authService = {
     if (response.data.success && response.data.data.token) {
       localStorage.setItem('token', response.data.data.token);
       localStorage.setItem('refreshToken', response.data.data.refreshToken);
+      localStorage.setItem('user', JSON.stringify({
+        id: response.data.data.userId,
+        username: response.data.data.username,
+        email: response.data.data.email,
+        firstName: '',
+        lastName: '',
+        role: response.data.data.role
+      }));
     }
     
     return response.data;
@@ -127,22 +137,22 @@ export const vehicleService = {
 
   // Admin functions
   create: async (vehicleData: any) => {
-    const response = await api.post('/vehicles/admin', vehicleData);
+    const response = await api.post('/vehicles', vehicleData);
     return response.data;
   },
 
   update: async (id: string, vehicleData: any) => {
-    const response = await api.put(`/vehicles/admin/${id}`, vehicleData);
+    const response = await api.put(`/vehicles/${id}`, vehicleData);
     return response.data;
   },
 
   delete: async (id: string) => {
-    const response = await api.delete(`/vehicles/admin/${id}`);
+    const response = await api.delete(`/vehicles/${id}`);
     return response.data;
   },
 
   updateStatus: async (id: string, status: string) => {
-    const response = await api.put(`/vehicles/admin/${id}/status`, null, {
+    const response = await api.put(`/vehicles/${id}/status`, null, {
       params: { status }
     });
     return response.data;
@@ -164,12 +174,12 @@ export const bookingService = {
   },
 
   getUserBookings: async () => {
-    const response = await api.get('/bookings/my-bookings');
+    const response = await api.get('/bookings');
     return response.data;
   },
 
   getUserBookingsPaged: async (page: number = 0, size: number = 10) => {
-    const response = await api.get('/bookings/my-bookings/paged', {
+    const response = await api.get('/bookings', {
       params: { page, size }
     });
     return response.data;
@@ -268,6 +278,18 @@ export const paymentService = {
 
   getBookingPayments: async (bookingId: string) => {
     const response = await api.get(`/payments/booking/${bookingId}`);
+    return response.data;
+  },
+};
+
+export const userService = {
+  getProfile: async () => {
+    const response = await api.get('/users/profile');
+    return response.data;
+  },
+
+  updateProfile: async (profileData: any) => {
+    const response = await api.put('/users/profile', profileData);
     return response.data;
   },
 };

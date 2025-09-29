@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AppProvider } from './context/AppContext';
+import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -10,7 +10,7 @@ import Booking from './pages/Booking';
 
 function App() {
   return (
-    <AppProvider>
+    <AuthProvider>
       <Router>
         <div className="min-h-screen bg-gray-50">
           <Header />
@@ -23,7 +23,7 @@ function App() {
           </Routes>
         </div>
       </Router>
-    </AppProvider>
+    </AuthProvider>
   );
 }
 
