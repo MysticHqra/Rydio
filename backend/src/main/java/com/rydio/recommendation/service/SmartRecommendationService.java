@@ -3,6 +3,9 @@ package com.rydio.recommendation.service;
 import com.rydio.recommendation.dto.RecommendationRequest;
 import com.rydio.recommendation.dto.RecommendationResponse;
 import com.rydio.recommendation.dto.VehicleRecommendation;
+import com.rydio.vehicle.service.VehicleService;
+import com.rydio.vehicle.dto.VehicleResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,50 +14,40 @@ import java.util.stream.Collectors;
 @Service
 public class SmartRecommendationService {
     
-    // Mock vehicle data - in real implementation, this would come from database
-    private List<Map<String, Object>> getMockVehicles() {
-        List<Map<String, Object>> vehicles = new ArrayList<>();
+    @Autowired
+    private VehicleService vehicleService;
+    
+    // Get real vehicle data from database
+    private List<Map<String, Object>> getAvailableVehicles() {
+        List<VehicleResponse> vehicles = vehicleService.getAvailableVehicles();
         
-        vehicles.add(createVehicle(1L, "Honda", "Activa 6G", "SCOOTER", "PETROL", 4, 600.0, 25.0,
-                "Mumbai Central", "Perfect for solo city rides"));
-        vehicles.add(createVehicle(2L, "Maruti", "Swift", "CAR", "PETROL", 4, 1800.0, 75.0,
-                "Mumbai Central", "Comfortable sedan for small families"));
-        vehicles.add(createVehicle(3L, "Hero", "Splendor Plus", "BIKE", "PETROL", 2, 480.0, 20.0,
-                "Mumbai Central", "Economical bike for daily commute"));
-        vehicles.add(createVehicle(4L, "Hyundai", "i20", "CAR", "PETROL", 5, 2200.0, 90.0,
-                "Mumbai Central", "Premium hatchback with modern features"));
-        vehicles.add(createVehicle(5L, "Ola", "S1 Pro", "SCOOTER", "ELECTRIC", 2, 800.0, 35.0,
-                "Mumbai Central", "Eco-friendly electric scooter"));
-        vehicles.add(createVehicle(6L, "Mahindra", "Thar", "CAR", "DIESEL", 4, 3500.0, 145.0,
-                "Mumbai Central", "Rugged SUV for adventure trips"));
-        vehicles.add(createVehicle(7L, "Trek", "City Bike", "BICYCLE", "NONE", 1, 200.0, 10.0,
-                "Mumbai Central", "Eco-friendly option for short distances"));
-        vehicles.add(createVehicle(8L, "Toyota", "Innova", "CAR", "DIESEL", 7, 2800.0, 115.0,
-                "Mumbai Central", "Spacious MPV for large families"));
-        
-        return vehicles;
+        return vehicles.stream()
+                .map(this::convertVehicleToMap)
+                .collect(Collectors.toList());
     }
     
-    private Map<String, Object> createVehicle(Long id, String brand, String model, String type, 
-                                            String fuel, int seats, double dailyRate, double hourlyRate,
-                                            String location, String description) {
-        Map<String, Object> vehicle = new HashMap<>();
-        vehicle.put("id", id);
-        vehicle.put("brand", brand);
-        vehicle.put("model", model);
-        vehicle.put("vehicleType", type);
-        vehicle.put("fuelType", fuel);
-        vehicle.put("seatCount", seats);
-        vehicle.put("dailyRate", dailyRate);
-        vehicle.put("hourlyRate", hourlyRate);
-        vehicle.put("location", location);
-        vehicle.put("description", description);
-        vehicle.put("status", "AVAILABLE");
-        return vehicle;
+    private Map<String, Object> convertVehicleToMap(VehicleResponse vehicle) {
+        Map<String, Object> vehicleMap = new HashMap<>();
+        vehicleMap.put("id", vehicle.getId());
+        vehicleMap.put("brand", vehicle.getBrand());
+        vehicleMap.put("model", vehicle.getModel());
+        vehicleMap.put("vehicleType", vehicle.getVehicleType().toString());
+        vehicleMap.put("fuelType", vehicle.getFuelType().toString());
+        vehicleMap.put("seatCount", vehicle.getSeatCount() != null ? vehicle.getSeatCount() : 1);
+        vehicleMap.put("dailyRate", vehicle.getDailyRate());
+        vehicleMap.put("hourlyRate", vehicle.getHourlyRate() != null ? vehicle.getHourlyRate() : vehicle.getDailyRate() / 24.0);
+        vehicleMap.put("location", vehicle.getLocation() != null ? vehicle.getLocation() : "Mumbai Central");
+        vehicleMap.put("description", vehicle.getDescription() != null ? vehicle.getDescription() : vehicle.getBrand() + " " + vehicle.getModel());
+        vehicleMap.put("status", vehicle.getStatus().toString());
+        vehicleMap.put("color", vehicle.getColor());
+        vehicleMap.put("year", vehicle.getYear());
+        vehicleMap.put("features", vehicle.getFeatures());
+        vehicleMap.put("imageUrl", vehicle.getImageUrl());
+        return vehicleMap;
     }
     
     public RecommendationResponse getSmartRecommendations(RecommendationRequest request) {
-        List<Map<String, Object>> vehicles = getMockVehicles();
+        List<Map<String, Object>> vehicles = getAvailableVehicles();
         List<VehicleRecommendation> recommendations = new ArrayList<>();
         
         for (Map<String, Object> vehicle : vehicles) {

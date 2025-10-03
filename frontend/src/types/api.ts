@@ -98,7 +98,6 @@ export interface CreateVehicleRequest {
   mileage?: number;
   insuranceNumber?: string;
   registrationNumber?: string;
-  status: 'AVAILABLE' | 'RENTED' | 'MAINTENANCE' | 'INACTIVE';
   location?: string;
   description?: string;
   features?: string;

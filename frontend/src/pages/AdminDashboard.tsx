@@ -61,6 +61,12 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (user && user.role === 'ADMIN') {
+      fetchDashboardData();
+    }
+  }, [user]);
+
   // Check admin access
   if (!user || user.role !== 'ADMIN') {
     return (
@@ -72,10 +78,6 @@ const AdminDashboard: React.FC = () => {
       </div>
     );
   }
-
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
 
   const fetchDashboardData = async () => {
     setLoading(true);

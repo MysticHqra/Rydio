@@ -3,12 +3,14 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { vehicleService } from '../services/api';
 import VehicleCard from '../components/VehicleCard';
+import AddVehicleModal from '../components/AddVehicleModal';
 import { Vehicle } from '../types/api';
 
 const VehicleList: React.FC = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [filteredVehicles, setFilteredVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [filters, setFilters] = useState({
     type: 'all',
     availability: 'all',
@@ -97,6 +99,12 @@ const VehicleList: React.FC = () => {
     navigate(`/booking/${vehicleId}`);
   };
 
+  const handleVehicleAdded = () => {
+    // Refresh vehicles list after adding a new vehicle
+    fetchVehicles();
+    setShowAddModal(false);
+  };
+
   // Show login prompt for guest users
   if (!isAuthenticated) {
     return (
@@ -175,9 +183,22 @@ const VehicleList: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Available Vehicles</h1>
-          <p className="mt-2 text-gray-600">Find the perfect vehicle for your journey</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Available Vehicles</h1>
+            <p className="mt-2 text-gray-600">Find the perfect vehicle for your journey</p>
+          </div>
+          {isAuthenticated && (
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 flex items-center gap-2"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Add Your Vehicle
+            </button>
+          )}
         </div>
 
         {/* Smart Recommendations Banner */}
@@ -286,6 +307,15 @@ const VehicleList: React.FC = () => {
           </div>
         )}
       </div>
+      
+      {/* Add Vehicle Modal */}
+      {showAddModal && (
+        <AddVehicleModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onSuccess={handleVehicleAdded}
+        />
+      )}
     </div>
   );
 };

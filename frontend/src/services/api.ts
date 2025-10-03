@@ -175,19 +175,28 @@ export const vehicleService = {
 
   // Admin functions - these will need to be implemented in backend later
   create: async (vehicleData: any) => {
-    throw new Error('Vehicle creation not implemented yet');
+    const response = await api.post('/vehicles', vehicleData);
+    return response.data;
   },
 
   update: async (id: string, vehicleData: any) => {
-    throw new Error('Vehicle update not implemented yet');
+    const response = await api.put(`/vehicles/${id}`, vehicleData);
+    return response.data;
   },
 
   delete: async (id: string) => {
-    throw new Error('Vehicle deletion not implemented yet');
+    const response = await api.delete(`/vehicles/${id}`);
+    return response.data;
   },
 
   updateStatus: async (id: string, status: string) => {
-    throw new Error('Vehicle status update not implemented yet');
+    const response = await api.patch(`/vehicles/${id}/status?status=${status}`);
+    return response.data;
+  },
+
+  getMyVehicles: async () => {
+    const response = await api.get('/vehicles/my-vehicles');
+    return response.data;
   },
 };
 

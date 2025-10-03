@@ -39,8 +39,8 @@ public class SecurityConfig {
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/health/**").permitAll()
                 .requestMatchers("/recommendations/**").permitAll() // Allow recommendations for all users
-                .requestMatchers("/vehicles").permitAll() // Allow vehicle browsing for guests
-                .requestMatchers("/vehicles/**").permitAll() // Allow vehicle details for guests
+                .requestMatchers("/vehicles", "/vehicles/search").permitAll() // Allow vehicle browsing for guests
+                .requestMatchers("/vehicles/{id}").permitAll() // Allow vehicle details for guests
                 .anyRequest().authenticated()
             )
             .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable())) // For H2 Console
