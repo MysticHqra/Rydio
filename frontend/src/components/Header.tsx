@@ -28,12 +28,12 @@ const Header: React.FC = () => {
             >
               Vehicles
             </Link>
-            <Link
+            {/* <Link
               to="/recommendations"
               className="text-indigo-500 hover:text-indigo-700 px-3 py-2 rounded-md text-sm font-medium"
             >
-              🎯 Smart Recommendations
-            </Link>
+              Smart Recommendations
+            </Link> */}
             {isAuthenticated && (
               <Link
                 to="/profile"

@@ -112,6 +112,7 @@ public class DataInitializer implements CommandLineRunner {
                 scooter.setLocation("Mumbai Central");
                 scooter.setDescription("Perfect scooter for city rides with excellent mileage");
                 scooter.setFeatures("Bluetooth connectivity, LED headlights, Digital console");
+                scooter.setImageUrl("https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--connected-obd-2b1737697110094.jpg?q=80");
                 vehicleService.createVehicle(scooter, hara.getId());
                 
                 // Vehicle 2: Maruti Swift (Test User's Car)
@@ -131,6 +132,7 @@ public class DataInitializer implements CommandLineRunner {
                 car1.setLocation("Mumbai Central");
                 car1.setDescription("Comfortable hatchback perfect for family trips");
                 car1.setFeatures("AC, Power steering, ABS, Airbags");
+                car1.setImageUrl("https://imgd.aeplcdn.com/664x374/n/cw/ec/159099/swift-exterior-right-front-three-quarter-31.jpeg?isig=0&q=80");
                 vehicleService.createVehicle(car1, testUser.getId());
                 
                 // Vehicle 3: Hero Splendor Plus (Admin's Bike)
@@ -150,6 +152,7 @@ public class DataInitializer implements CommandLineRunner {
                 bike.setLocation("Pune");
                 bike.setDescription("Reliable motorcycle for daily commute with great mileage");
                 bike.setFeatures("Kick start, Electric start, Alloy wheels");
+                bike.setImageUrl("https://imgd.aeplcdn.com/664x374/n/cw/ec/1/versions/--drum-brake-obd-2b1744875559407.jpg?q=80");
                 vehicleService.createVehicle(bike, admin.getId());
                 
                 // Vehicle 4: Hyundai i20 (Hara's Premium Car)
@@ -169,6 +172,7 @@ public class DataInitializer implements CommandLineRunner {
                 car2.setLocation("Delhi");
                 car2.setDescription("Premium hatchback with modern features and excellent comfort");
                 car2.setFeatures("Touchscreen, Automatic transmission, Sunroof, Wireless charging");
+                car2.setImageUrl("https://imgd.aeplcdn.com/664x374/n/cw/ec/150603/i20-exterior-right-front-three-quarter-7.jpeg?isig=0&q=80");
                 vehicleService.createVehicle(car2, hara.getId());
                 
                 // Vehicle 5: Ola S1 Pro (Test User's Electric Scooter)
@@ -188,6 +192,7 @@ public class DataInitializer implements CommandLineRunner {
                 electricScooter.setLocation("Bangalore");
                 electricScooter.setDescription("Eco-friendly electric scooter with smart features");
                 electricScooter.setFeatures("App connectivity, GPS tracking, Hill hold assist");
+                electricScooter.setImageUrl("https://imgd.aeplcdn.com/664x374/n/mu64bfb_1811599.jpg?q=80");
                 vehicleService.createVehicle(electricScooter, testUser.getId());
                 
                 System.out.println("Created 5 test vehicles:");

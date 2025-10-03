@@ -209,6 +209,7 @@ public class SmartRecommendationService {
         recommendation.setDailyRate(dailyRate);
         recommendation.setHourlyRate(hourlyRate);
         recommendation.setLocation(vehicle.get("location").toString());
+        recommendation.setImageUrl(vehicle.get("imageUrl") != null ? vehicle.get("imageUrl").toString() : null);
         recommendation.setRecommendedAddOns(generateVehicleSpecificAddOns(vehicleType, request));
         
         // Calculate estimated cost

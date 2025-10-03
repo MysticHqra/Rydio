@@ -205,7 +205,7 @@ const VehicleList: React.FC = () => {
         <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg p-6 mb-8 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold mb-2">🎯 Not sure which vehicle to choose?</h2>
+              <h2 className="text-xl font-bold mb-2">Not sure which vehicle to choose?</h2>
               <p className="text-indigo-100">Get personalized recommendations based on your trip requirements!</p>
             </div>
             <Link

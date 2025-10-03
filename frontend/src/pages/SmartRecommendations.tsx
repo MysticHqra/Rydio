@@ -86,7 +86,7 @@ const SmartRecommendations: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            🎯 Smart Vehicle Recommendations
+            Smart Vehicle Recommendations
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Tell us about your trip and we'll find the perfect vehicle for you using our intelligent matching system
@@ -213,7 +213,7 @@ const SmartRecommendations: React.FC = () => {
                 {/* Recommended Vehicles */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    🎯 Your Perfect Matches ({recommendations.recommendations.length})
+                    Your Perfect Matches ({recommendations.recommendations.length})
                   </h3>
                   <div className="space-y-6">
                     {recommendations.recommendations.map((rec) => (

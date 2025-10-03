@@ -205,7 +205,7 @@ const SmartRecommendationForm: React.FC<SmartRecommendationFormProps> = ({ onSub
               Finding perfect vehicles...
             </div>
           ) : (
-            '🎯 Get Smart Recommendations'
+            'Get Smart Recommendations'
           )}
         </button>
       </form>
