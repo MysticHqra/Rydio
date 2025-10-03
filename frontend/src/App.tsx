@@ -9,6 +9,9 @@ import Register from './pages/Register';
 import VehicleList from './pages/VehicleList';
 import Booking from './pages/Booking';
 import IntegrationTest from './pages/IntegrationTest';
+import SmartRecommendations from './pages/SmartRecommendations';
+import Profile from './pages/Profile';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -21,9 +24,20 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/vehicles" element={<VehicleList />} />
+            <Route path="/recommendations" element={<SmartRecommendations />} />
             <Route path="/booking/:vehicleId" element={
               <ProtectedRoute requireAuth={true}>
                 <Booking />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute requireAuth={true}>
+                <Profile />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminDashboard />
               </ProtectedRoute>
             } />
             <Route path="/test" element={

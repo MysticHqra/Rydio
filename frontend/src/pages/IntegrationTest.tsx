@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { vehicleService, bookingService, authService } from '../services/api';
+import { recommendationService } from '../services/recommendationService';
 
 const IntegrationTest: React.FC = () => {
   const [testResults, setTestResults] = useState<any[]>([]);
@@ -63,6 +64,39 @@ const IntegrationTest: React.FC = () => {
       addResult('Get User Bookings', true, `Found ${bookings.data.length} bookings`);
     } catch (error) {
       addResult('Get User Bookings', false, null, error);
+    }
+
+    // Test 6: Smart Recommendations
+    try {
+      const recommendations = await recommendationService.getSmartRecommendations({
+        tripType: 'family',
+        passengerCount: 4,
+        duration: 'medium',
+        weatherCondition: 'sunny'
+      });
+      addResult('Smart Recommendations', true, `Found ${recommendations.data.recommendations.length} recommendations`);
+    } catch (error) {
+      addResult('Smart Recommendations', false, null, error);
+    }
+
+    // Test 7: Quick Recommendations
+    try {
+      const quickRecs = await recommendationService.getQuickRecommendations({
+        tripType: 'solo',
+        passengers: 1,
+        duration: 'short'
+      });
+      addResult('Quick Recommendations', true, `Found ${quickRecs.data.length} quick recommendations`);
+    } catch (error) {
+      addResult('Quick Recommendations', false, null, error);
+    }
+
+    // Test 8: Personalized Insight
+    try {
+      const insight = await recommendationService.getPersonalizedInsight();
+      addResult('Personalized Insight', true, `Insight: ${insight.data.insight.substring(0, 50)}...`);
+    } catch (error) {
+      addResult('Personalized Insight', false, null, error);
     }
 
     setLoading(false);

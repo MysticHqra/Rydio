@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { vehicleService } from '../services/api';
 import VehicleCard from '../components/VehicleCard';
@@ -178,6 +178,22 @@ const VehicleList: React.FC = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Available Vehicles</h1>
           <p className="mt-2 text-gray-600">Find the perfect vehicle for your journey</p>
+        </div>
+
+        {/* Smart Recommendations Banner */}
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg p-6 mb-8 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold mb-2">🎯 Not sure which vehicle to choose?</h2>
+              <p className="text-indigo-100">Get personalized recommendations based on your trip requirements!</p>
+            </div>
+            <Link
+              to="/recommendations"
+              className="bg-white text-indigo-600 px-6 py-2 rounded-md font-medium hover:bg-indigo-50 transition-colors duration-200"
+            >
+              Get Smart Recommendations
+            </Link>
+          </div>
         </div>
 
         {/* Filters */}
