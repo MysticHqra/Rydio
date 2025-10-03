@@ -7,15 +7,32 @@ A modern, full-stack vehicle rental platform built with **Spring Boot** (backend
 ### User Features
 - 🔐 **Secure JWT Authentication** - Production-ready authentication with encrypted passwords
 - 🚙 **Vehicle Browsing** - Browse available vehicles with guest access and login prompts
+- 🎯 **Smart Recommendations** - AI-powered vehicle suggestions based on trip requirements
 - 📅 **Smart Booking System** - Intuitive booking process with user authentication
-- 👤 **Profile Management** - Secure user account management
+- 👤 **Comprehensive Profile Management** - Complete user profile with booking history and statistics
+- 📊 **Booking History** - View past and current rentals with detailed information
+- 📈 **Personal Statistics** - Track spending, favorite vehicles, and membership details
 - 📱 **Responsive Design** - Mobile-first design with Tailwind CSS
 - 🔒 **Role-Based Access** - User and Admin role segregation
 
+### Smart Recommendation Features
+- 🧠 **Trip-Based Matching** - Vehicles suggested based on solo, family, business, leisure trips
+- 👥 **Passenger-Aware** - Recommendations consider passenger count and seating requirements
+- 🌤️ **Weather-Conscious** - Suggestions adapt to weather conditions (rainy, sunny, winter)
+- 💰 **Budget-Friendly** - Recommendations stay within specified budget limits
+- ⚡ **Fuel Preference** - Matches preferred fuel type (petrol, diesel, electric, hybrid)
+- 🎒 **Smart Add-ons** - Contextual accessories like helmets, GPS, child seats
+- 📊 **Personalized Learning** - Improves suggestions based on booking history
+
 ### Admin Features
-- 🏢 **Protected Admin Dashboard** - Admin-only access to management features
-- 🚗 **Vehicle Management** - Complete CRUD operations for vehicle inventory
-- 👥 **User Administration** - User management with role controls
+- 🏢 **Comprehensive Admin Dashboard** - Complete administrative control panel
+- 📊 **Real-time Analytics** - Platform statistics, revenue tracking, and performance metrics
+- 👥 **Advanced User Management** - User administration with role controls and activity monitoring
+- 🚗 **Vehicle Fleet Management** - Complete CRUD operations for vehicle inventory with status tracking
+- � **Booking Administration** - Comprehensive booking management with status updates
+- 📈 **Revenue Analytics** - Financial reporting and trend analysis
+- 🔍 **Usage Statistics** - Platform utilization and popular vehicle type tracking
+- 🎛️ **Multi-tab Interface** - Organized dashboard with Overview, Users, Vehicles, Bookings, and Analytics
 - 📊 **API Testing Interface** - Admin-only API testing and monitoring
 - 🔐 **Enhanced Security** - JWT-based admin authentication
 
@@ -154,6 +171,14 @@ POST /api/bookings/{id}/cancel   - Cancel booking
 GET  /api/bookings/admin/all     - Get all bookings (Admin only)
 ```
 
+### Smart Recommendations
+```
+POST /api/recommendations/smart        - Get smart vehicle recommendations
+GET  /api/recommendations/quick        - Get quick recommendations
+GET  /api/recommendations/add-ons      - Get recommended add-ons
+GET  /api/recommendations/personalized-insight - Get personalized insights
+```
+
 ### Health Check
 ```
 GET  /api/health                 - Application health status
@@ -175,6 +200,9 @@ Rydio/
 │   │   │   ├── Login.tsx       # Authentication page
 │   │   │   ├── Register.tsx    # User registration
 │   │   │   ├── VehicleList.tsx # Vehicle browsing with guest prompts
+│   │   │   ├── SmartRecommendations.tsx # AI-powered recommendations
+│   │   │   ├── Profile.tsx     # User profile management with booking history
+│   │   │   ├── AdminDashboard.tsx # Comprehensive admin control panel
 │   │   │   ├── Booking.tsx     # Booking management
 │   │   │   └── IntegrationTest.tsx # Admin-only API testing
 │   │   ├── context/            # React context providers
@@ -203,7 +231,12 @@ Rydio/
     │   │   │   ├── AuthController.java      # Authentication endpoints
     │   │   │   ├── UserController.java      # User management
     │   │   │   ├── BookingController.java   # Booking operations
+    │   │   │   ├── RecommendationController.java # Smart recommendations
     │   │   │   └── HealthController.java    # Health check
+    │   │   ├── recommendation/  # Smart recommendation system
+    │   │   │   ├── service/     # Recommendation algorithms
+    │   │   │   ├── dto/         # Recommendation data objects
+    │   │   │   └── controller/  # Recommendation endpoints
     │   │   ├── user/            # User domain
     │   │   │   ├── entity/      # User entity
     │   │   │   ├── repository/  # Data access layer
@@ -215,6 +248,108 @@ Rydio/
     │   └── test/                # Unit and integration tests
     └── pom.xml                 # Maven configuration
 ```
+
+## 🧪 Testing
+
+### Backend Tests
+```bash
+cd backend
+mvn test
+```
+
+### Frontend Tests
+```bash
+cd frontend
+npm test
+```
+
+### Manual Testing
+1. **Start both backend and frontend**
+2. **Test authentication flow:**
+   - Register new user
+   - Login with test accounts
+   - Verify JWT tokens in browser dev tools
+3. **Test role-based access:**
+   - Login as admin to access Admin Dashboard and API Test page
+   - Login as user to verify restricted access
+4. **Test guest experience:**
+   - Browse vehicles without authentication
+   - Verify login prompts for booking actions
+
+## 📱 Application Features
+
+### Profile Management
+The Profile page offers comprehensive user account management:
+
+#### Personal Information Management
+- **Editable Profile Fields:** First name, last name, phone number, date of birth
+- **Driver License Management:** License number and expiry date tracking
+- **Address Information:** Complete address management
+- **Account Security:** Email verification and account status display
+
+#### Booking History & Analytics
+- **Complete Booking History:** View all past, current, and upcoming rentals
+- **Booking Details:** Vehicle information, dates, amounts, and status tracking
+- **Personal Statistics:** 
+  - Total bookings and completed trips
+  - Total amount spent on rentals
+  - Favorite vehicle type analysis
+  - Membership duration tracking
+
+#### Account Status Overview
+- **Verification Status:** Email verification badge
+- **Account Activity:** Active/inactive status indicator
+- **Role Display:** User role with appropriate styling
+
+### Admin Dashboard
+A comprehensive administrative control panel with multiple management sections:
+
+#### Overview Tab
+- **Platform Statistics:** Total users, vehicles, active bookings, and revenue
+- **Growth Metrics:** New users and bookings for current month
+- **Recent Activity:** Latest bookings and vehicle status updates
+- **Quick Status:** At-a-glance platform health
+
+#### User Management Tab
+- **Complete User List:** All registered users with detailed information
+- **User Analytics:** Total bookings and spending per user
+- **Account Controls:** Activate/deactivate user accounts
+- **Role Management:** User role display and management
+- **Registration Tracking:** User creation dates and activity
+
+#### Vehicle Management Tab
+- **Fleet Overview:** Complete vehicle inventory with status
+- **Availability Control:** Toggle vehicle availability status
+- **Performance Metrics:** Booking counts and utilization rates
+- **Maintenance Tracking:** Last service date monitoring
+- **Revenue Analysis:** Price per day and total bookings
+
+#### Booking Administration Tab
+- **Booking Overview:** All platform bookings with full details
+- **Status Management:** Update booking status (Pending, Active, Completed, Cancelled)
+- **User-Vehicle Mapping:** Complete booking relationship tracking
+- **Revenue Tracking:** Individual booking amounts and dates
+- **Customer Information:** User details for each booking
+
+#### Analytics Tab
+- **Platform Metrics:** Vehicle utilization, average ratings, growth percentages
+- **Popular Vehicle Analysis:** Usage statistics by vehicle type with visual progress bars
+- **Revenue Trends:** Monthly revenue tracking and growth analysis
+- **Performance Indicators:** Key business metrics and trends
+
+### Smart Recommendations System
+AI-powered vehicle suggestions with multiple recommendation types:
+
+#### Trip-Based Recommendations
+- **Solo Trips:** Scooters and bikes for individual travel
+- **Family Trips:** Cars and SUVs with safety features
+- **Business Trips:** Professional vehicles with comfort features
+- **Adventure Trips:** Robust vehicles with special equipment
+
+#### Smart Add-On Suggestions
+- **Family-Specific:** Child safety seats, entertainment systems
+- **Business-Oriented:** Wi-Fi hotspots, phone chargers, premium insurance
+- **Adventure-Ready:** GPS navigation, emergency kits, all-terrain equipment
 
 ## 🧪 Testing
 
@@ -403,6 +538,10 @@ For support, questions, or feature requests:
 - Guest user experience
 - Responsive design
 - Error handling and user feedback
+- Smart vehicle recommendations with AI-powered matching
+- Personalized suggestions based on booking history
+- Trip-based vehicle matching algorithms
+- Weather-aware and budget-conscious recommendations
 
 🔄 **Future Enhancements:**
 - Payment gateway integration
