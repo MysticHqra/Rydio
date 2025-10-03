@@ -1,38 +1,46 @@
-<!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
-- [x] Verify that the copilot-instructions.md file in the .github directory is created. ✅ Completed
+# Rydio Platform - GitHub Copilot Instructions
 
-- [x] Clarify Project Requirements ✅ Completed - React frontend for Rydio vehicle rental platform
+## Project Overview
+Rydio is a modern peer-to-peer vehicle rental platform built with React TypeScript frontend and Spring Boot backend. The platform enables users to list their own vehicles and rent from others in their community.
 
-- [x] Scaffold the Project ✅ Completed - React TypeScript app with TailwindCSS
+## Architecture
+- **Frontend**: React 18 + TypeScript + Tailwind CSS
+- **Backend**: Spring Boot 3.2.0 + Spring Security + JWT
+- **Database**: H2 (development) / PostgreSQL (production ready)
+- **Authentication**: JWT-based with BCrypt password hashing
 
-- [x] Customize the Project ✅ Completed - Created components, pages, routing, and state management
+## Key Features
+- User authentication and authorization (USER/ADMIN roles)
+- Peer-to-peer vehicle marketplace
+- Smart AI-powered vehicle recommendations
+- Comprehensive admin dashboard
+- Real-time vehicle availability
+- Professional vehicle images integration
+- Mobile-responsive design
 
-- [x] Install Required Extensions ✅ Completed - No additional extensions needed
+## Development Guidelines
+- Follow TypeScript best practices and maintain type safety
+- Use functional components with React hooks
+- Implement proper error handling and loading states
+- Follow Spring Boot conventions and DDD principles
+- Use JPA/Hibernate for database operations
+- Implement comprehensive exception handling
+- Write tests for critical business logic
 
-- [x] Compile the Project ✅ Completed - Project builds successfully
-	<!--
-	Verify that all previous steps have been completed.
-	Install any missing dependencies.
-	Run diagnostics and resolve any issues.
-	Check for markdown files in project folder for relevant instructions on how to do this.
-	-->
+## Code Patterns
+- Use custom hooks for reusable logic
+- Implement protected routes based on authentication and roles
+- Use context for global state management
+- Follow RESTful API design principles
+- Use DTOs for request/response objects
+- Implement proper validation on both frontend and backend
 
-- [x] Create and Run Task ✅ Completed - Created comprehensive tasks.json with frontend/backend development servers, build tasks, test tasks, and full application launch
-	<!--
-	Verify that all previous steps have been completed.
-	Check https://code.visualstudio.com/docs/debugtest/tasks to determine if the project needs a task. If so, use the create_and_run_task to create and launch a task based on package.json, README.md, and project structure.
-	Skip this step otherwise.
-	 -->
+## Recent Enhancements
+- Fixed backend server startup issues (endpoint mapping conflicts)
+- Integrated real vehicle data into smart recommendations
+- Added comprehensive test vehicle data with professional images
+- Enhanced peer-to-peer vehicle sharing capabilities
+- Updated documentation with current feature set
 
-- [ ] Launch the Project
-	<!--
-	Verify that all previous steps have been completed.
-	Prompt user for debug mode, launch only if confirmed.
-	 -->
-
-- [ ] Ensure Documentation is Complete
-	<!--
-	Verify that all previous steps have been completed.
-	Verify that README.md and the copilot-instructions.md file in the .github directory exists and contains current project information.
-	Clean up the copilot-instructions.md file in the .github directory by removing all HTML comments.
-	 -->
+## Project Status
+✅ **Production Ready** - Complete peer-to-peer vehicle rental platform with comprehensive features, real data integration, and professional image assets.

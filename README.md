@@ -7,13 +7,15 @@ A modern, full-stack vehicle rental platform built with **Spring Boot** (backend
 ### User Features
 - 🔐 **Secure JWT Authentication** - Production-ready authentication with encrypted passwords
 - 🚙 **Vehicle Browsing** - Browse available vehicles with guest access and login prompts
-- 🎯 **Smart Recommendations** - AI-powered vehicle suggestions based on trip requirements
+- 🎯 **Smart Recommendations** - AI-powered vehicle suggestions based on trip requirements using real vehicle data
 - 📅 **Smart Booking System** - Intuitive booking process with user authentication
+- 🚗 **Add Your Vehicle** - Peer-to-peer vehicle sharing platform where users can list their own vehicles
 - 👤 **Comprehensive Profile Management** - Complete user profile with booking history and statistics
 - 📊 **Booking History** - View past and current rentals with detailed information
 - 📈 **Personal Statistics** - Track spending, favorite vehicles, and membership details
 - 📱 **Responsive Design** - Mobile-first design with Tailwind CSS
 - 🔒 **Role-Based Access** - User and Admin role segregation
+- 🖼️ **Vehicle Images** - High-quality vehicle images for better visual experience
 
 ### Smart Recommendation Features
 - 🧠 **Trip-Based Matching** - Vehicles suggested based on solo, family, business, leisure trips
@@ -23,6 +25,8 @@ A modern, full-stack vehicle rental platform built with **Spring Boot** (backend
 - ⚡ **Fuel Preference** - Matches preferred fuel type (petrol, diesel, electric, hybrid)
 - 🎒 **Smart Add-ons** - Contextual accessories like helmets, GPS, child seats
 - 📊 **Personalized Learning** - Improves suggestions based on booking history
+- 🔄 **Real-Time Data Integration** - Uses actual vehicle inventory from database
+- 🚫 **Empty State Handling** - Gracefully handles scenarios when no vehicles are available
 
 ### Admin Features
 - 🏢 **Comprehensive Admin Dashboard** - Complete administrative control panel
@@ -121,19 +125,32 @@ A modern, full-stack vehicle rental platform built with **Spring Boot** (backend
 - **ADMIN:** Full administrative access including user management and API testing
 
 ### Test Accounts
-The application comes with pre-configured test accounts:
+The application comes with pre-configured test accounts and sample vehicles:
 
+**Test Users:**
 ```
 Admin Account:
 - Email: admin@rydio.com
 - Password: admin123
 - Role: ADMIN
 
-User Account:
-- Email: user@rydio.com
-- Password: user123
+Hara User:
+- Email: hara@gmail.com
+- Password: Hara@1234
+- Role: USER
+
+Test User:
+- Email: test@example.com
+- Password: password123
 - Role: USER
 ```
+
+**Sample Vehicles:**
+- Honda Activa 6G (Scooter) - ₹600/day - Owned by Hara
+- Maruti Swift (Car) - ₹1800/day - Owned by Test User
+- Hero Splendor Plus (Bike) - ₹480/day - Owned by Admin
+- Hyundai i20 (Premium Car) - ₹2200/day - Owned by Hara
+- Ola S1 Pro (Electric Scooter) - ₹800/day - Owned by Test User
 
 ## 📚 API Documentation
 
@@ -153,12 +170,13 @@ GET  /api/users/admin/all        - Get all users (Admin only)
 
 ### Vehicle Endpoints
 ```
-GET  /api/vehicles               - Get all vehicles (public access)
+GET  /api/vehicles               - Get all available vehicles (public access)
 GET  /api/vehicles/{id}          - Get vehicle by ID
-POST /api/vehicles/search        - Search vehicles with filters
-POST /api/vehicles/admin         - Create vehicle (Admin only)
-PUT  /api/vehicles/admin/{id}    - Update vehicle (Admin only)
-DELETE /api/vehicles/admin/{id}  - Delete vehicle (Admin only)
+POST /api/vehicles               - Create new vehicle (authenticated users)
+PUT  /api/vehicles/{id}          - Update vehicle (vehicle owner only)
+DELETE /api/vehicles/{id}        - Delete vehicle (vehicle owner only)
+GET  /api/vehicles/my-vehicles   - Get current user's vehicles
+GET  /api/vehicles/search        - Search vehicles with filters
 ```
 
 ### Booking Endpoints
@@ -530,27 +548,33 @@ For support, questions, or feature requests:
 ## 🎯 Current Status
 
 ✅ **Production Ready Features:**
-- Complete JWT authentication system
-- Role-based access control
-- Encrypted password storage
-- Protected routes and components
-- Admin-only features
-- Guest user experience
-- Responsive design
-- Error handling and user feedback
-- Smart vehicle recommendations with AI-powered matching
-- Personalized suggestions based on booking history
-- Trip-based vehicle matching algorithms
-- Weather-aware and budget-conscious recommendations
+- Complete JWT authentication system with BCrypt password encryption
+- Role-based access control with User and Admin roles
+- Peer-to-peer vehicle rental platform where users can list their own vehicles
+- Protected routes and components with graceful guest experience
+- Comprehensive admin dashboard with multi-tab interface
+- Smart vehicle recommendations using real database data
+- AI-powered matching algorithms for trip-based suggestions
+- Personalized recommendations based on booking history and user preferences
+- Complete vehicle management with CRUD operations
+- User profile management with booking history and statistics
+- Vehicle images with high-quality Unsplash integration
+- Responsive design optimized for mobile and desktop
+- Sample test data with 5 diverse vehicles and 3 test users
+- Real-time data integration between frontend and backend
+- Error handling and user feedback throughout the application
 
 🔄 **Future Enhancements:**
-- Payment gateway integration
-- Real-time booking notifications
-- Advanced vehicle search filters
-- Mobile application
-- Email verification system
-- Booking conflict resolution
-- Analytics dashboard
+- Payment gateway integration for secure transactions
+- Real-time booking notifications and status updates
+- Advanced vehicle search filters and sorting options
+- Mobile application for iOS and Android
+- Email verification system and password reset
+- Booking conflict resolution and availability checking
+- Advanced analytics dashboard with charts and graphs
+- Integration with external mapping services for location-based features
+- Review and rating system for vehicles and users
+- Insurance and damage reporting system
 
 ---
 
